@@ -2,11 +2,9 @@
 
 namespace HFM {
     public class BTAdapter<TData> {
-        Stack<IStateEvaluator<TData>> _currentExecution;
+        Stack<BTNode<TData>> _currentExecution;
 
-        public void AddState(IStateEvaluator<TData> state) {
-            _currentExecution.Push(state);
-        }
+        public void AddState(BTNode<TData> state) => _currentExecution.Push(state);
 
     }
 }

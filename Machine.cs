@@ -30,23 +30,29 @@
     /// <typeparam name="TData">Data managed by the Machine</typeparam>
     public abstract class Machine<TData> : IStateEvaluator<TData> {
         public int ActiveState { get; set; }
+        
+        private IStateEvaluator<TData> this[int activeState, int nextState]
+            => States[StatesReferences[activeState - 1][nextState - 1]];
 
-        protected abstract IStateEvaluator<TData> this[int x] { get; }
+        protected abstract IStateEvaluator<TData>[] States { get; }
 
-        public abstract void OnStart(TData data);
+        protected abstract int[][] StatesReferences { get; }
+
+        public virtual void OnStart(TData data) => ActiveState = 0;
 
         protected abstract int ExitStep(TData data, int nextState);
 
         public int Next(TData data) {
+            int nextState;
             for (; ; ) {
-                ActiveState = this[ActiveState].Next(data);
-                if (ActiveState > 0) {
-                    this[ActiveState].OnStart(data);
+                nextState = this[ActiveState, 0].Next(data);
+                if (nextState > 0) {
+                    this[ActiveState, nextState].OnStart(data);
                 }
                 else { break; }
             }
-            if (ActiveState < 0) { ActiveState = ExitStep(data, -ActiveState); }
-            return ActiveState;
+            if (nextState < 0) { nextState = ExitStep(data, -ActiveState); }
+            return nextState;
         }
 
         public int Next(TData data, int startAt) {

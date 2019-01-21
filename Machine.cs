@@ -1,4 +1,6 @@
-﻿namespace HFM {
+﻿using System;
+
+namespace HFM {
     /// <summary>
     /// This class is one node of a Hierarchical State Machine, it works as an FSM is used alone.
     /// It's behaviour is based on the returned value (inner value) of the State Evaluator called
@@ -30,29 +32,33 @@
     /// <typeparam name="TData">Data managed by the Machine</typeparam>
     public abstract class Machine<TData> : IStateEvaluator<TData> {
         public int ActiveState { get; set; }
-        
-        private IStateEvaluator<TData> this[int activeState, int nextState]
-            => States[StatesReferences[activeState - 1][nextState - 1]];
 
         protected abstract IStateEvaluator<TData>[] States { get; }
-
         protected abstract int[][] StatesReferences { get; }
+
+        private int NextState(int transitionValue) => StatesReferences[ActiveState][transitionValue - 1];
 
         public virtual void OnStart(TData data) => ActiveState = 0;
 
         protected abstract int ExitStep(TData data, int nextState);
 
         public int Next(TData data) {
-            int nextState;
+            int transitionValue;
             for (; ; ) {
-                nextState = this[ActiveState, 0].Next(data);
-                if (nextState > 0) {
-                    this[ActiveState, nextState].OnStart(data);
+                transitionValue = States[ActiveState].Next(data);
+                if (transitionValue > 0) {
+                    transitionValue = NextState(transitionValue);
+                    Console.WriteLine($"{transitionValue}...{ActiveState}");
+                    if (transitionValue <= 0) break;
+                    ActiveState = transitionValue-1;
+                    States[ActiveState].OnStart(data);
                 }
-                else { break; }
+                else {
+                    throw new System.Exception("Invalid Exit Value from nested StateEvaluator");
+                }
             }
-            if (nextState < 0) { nextState = ExitStep(data, -ActiveState); }
-            return nextState;
+            if (transitionValue < 0) { transitionValue = ExitStep(data, -ActiveState); }
+            return transitionValue;
         }
 
         public int Next(TData data, int startAt) {

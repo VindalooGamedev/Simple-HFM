@@ -32,13 +32,15 @@ namespace HFM {
     /// <typeparam name="TData">Data managed by the Machine</typeparam>
     public abstract class Machine<TData> : IStateEvaluator<TData> {
         public int ActiveState { get; set; }
-
-        protected abstract IStateEvaluator<TData>[] States { get; }
-        protected abstract int[][] StatesReferences { get; }
+        protected IStateEvaluator<TData>[] States;
+        protected int[][] StatesReferences;
 
         private int NextState(int transitionValue) => StatesReferences[ActiveState][transitionValue - 1];
 
-        public virtual void OnStart(TData data) => ActiveState = 0;
+        public virtual void OnStart(TData data) {
+            ActiveState = 0;
+            States[0].OnStart(data);
+        }
 
         protected abstract int ExitStep(TData data, int nextState);
 
@@ -48,16 +50,15 @@ namespace HFM {
                 transitionValue = States[ActiveState].Next(data);
                 if (transitionValue > 0) {
                     transitionValue = NextState(transitionValue);
-                    Console.WriteLine($"{transitionValue}...{ActiveState}");
                     if (transitionValue <= 0) break;
                     ActiveState = transitionValue-1;
                     States[ActiveState].OnStart(data);
                 }
                 else {
-                    throw new System.Exception("Invalid Exit Value from nested StateEvaluator");
+                    throw new Exception("Invalid Exit Value from nested StateEvaluator");
                 }
             }
-            if (transitionValue < 0) { transitionValue = ExitStep(data, -ActiveState); }
+            if (transitionValue < 0) { transitionValue = ExitStep(data, -transitionValue); }
             return transitionValue;
         }
 

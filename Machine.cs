@@ -48,17 +48,21 @@ namespace HFM {
             int transitionValue;
             for (; ; ) {
                 transitionValue = States[ActiveState].Next(data);
+                if (transitionValue == 0) break;
                 if (transitionValue > 0) {
                     transitionValue = NextState(transitionValue);
-                    if (transitionValue <= 0) break;
-                    ActiveState = transitionValue-1;
-                    States[ActiveState].OnStart(data);
+                    if (transitionValue == 0) break;
+                    if (transitionValue > 0) {
+                        ActiveState = transitionValue - 1;
+                        States[ActiveState].OnStart(data);
+                    }
+                    else {
+                        transitionValue = ExitStep(data, -transitionValue);
+                        break;
+                    }
                 }
-                else {
-                    throw new Exception("Invalid Exit Value from nested StateEvaluator");
-                }
+                else throw new Exception("Invalid Exit Value from nested StateEvaluator");
             }
-            if (transitionValue < 0) { transitionValue = ExitStep(data, -transitionValue); }
             return transitionValue;
         }
 

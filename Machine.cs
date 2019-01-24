@@ -2,32 +2,41 @@
 
 namespace HFM {
     /// <summary>
-    /// This class is one node of a Hierarchical State Machine, it works as an FSM is used alone.
-    /// It's behaviour is based on the returned value (inner value) of the State Evaluator called
-    /// from him (it can be another machine or an state) and then it returns another value (outter
-    /// value) to define its situation.
-    ///  - If (innerValue GREATER_THAN 0) then it changes from the active state to the one assigned to that 
-    ///    place and keep running at the new state.
-    ///  - If (innerValue EQUAL_THAN 0) then it won't change from that state and return 0 to tell outters
-    ///    machines that its job is unfinished.
-    ///  - If (innerValue LOWER_THAN 0) then it will change its sign and derived to non abstract definition,
-    ///    this way this machine will define which value it will be returned and changed at the next level.
+    /// Esta clase define un nódo de las máquinas de estado jerárquicas. Estos nodos pueden usarse como
+    /// la raíz o un estado intermedio dentro de la jerarquía, usando los estados como nodos hoja.
     /// 
-    /// Values:
-    ///  + ActiveState will define which state is the one active.
-    ///  + NextState will hold a code that will mean which state will be the next in the Machine process
-    ///    or it will mean the exit value of that state that with the help of the derivative classes will 
-    ///    return the next state of the outter machine.
+    /// Fases de comportamiento:
+    ///  + Fase inicial: Ejecutando OnStart Se prepara para el primer estado que coindice con el estado
+    ///    de entrada.
     ///    
-    /// Methods:
-    ///  + Next Will make the next step of the process and if it changes from one state to another it will
-    ///    keep working on it until it returns a value that will stop on a state or change an outter state.
-    ///     - A variant is used to define the firstState will be used (It's useful when the Machine has more
-    ///       than one entry point).
-    ///  + OnStart is executed before the first Next is called. It's used to prepare the data.
-    ///  + ExitStep is called when the state called return an exit code (lower than zero) to decide which 
-    ///    exit code the machine will have. It must be used with ActiveState value to decide and it should
-    ///    not be defined at state to have them decoupled from the machine.
+    ///  + Fase en bucle: En esta fase cada vez que se llama a next el estado actual de la lógica se 
+    ///    actualiza pudiendo cambiar de estado y volver a un nodo anterior de la jerarquía.
+    ///    
+    ///  + Fase final: Debido a los valores devueltos por los nodos hijos el proceso termina y este 
+    ///    nodo devuelve un valor que define el tipo de término que ha tenido el proceso.
+    /// 
+    /// Comportamiento:
+    ///    El proceso de inicialización está asociado directamente con OnStart, cuando se ejecuta el 
+    ///    método OnStart se asocia el primer estado como el 0 y luego se llama al OnStart del hijo,
+    ///    de modo que depende de donde se llame a base.OnStart el orden de adaptación al primer estado
+    ///    sucederá en un orden u otro.
+    ///    
+    ///    El el proceso de ejecución se cubren las fases de bucle y final funciona de la siguiente manera.
+    ///    Al llamarse a Next este nodo llama al Next del nodo activo y dependiendo del valor de retorno
+    ///    este nodo actuará de una forma u otra.
+    ///    El valor obtenido valorDeTransición (inicial) no puede ser negativo, los valores viables son:
+    ///     + Si valorDeTransición igualQue 0: el estado activo se mantiene.
+    ///     + Si valorDeTransición mayorQue 0: el valor devuelto se consulta en la tabla de transición y se
+    ///       obtiene el valorDeTransición (final).
+    ///       - Si el valorDeTransición igualQue 0: el estado activo se mantiene.
+    ///       - Si el valorDeTransición menorQue 0: Es una transición de salida y se sale de este nodo de
+    ///         transición con el valor devuelto con ExitStep al que se le pasa el valorDeTransición con 
+    ///         signo cambiado (de esta forma el nodo padre elegirá el estado con su tabla de transición).
+    ///         En caso de que el valor devuelto sea de la raíz de la estructura este valor de salida puede
+    ///         servir para recordar desde que estado se ha salido si es que esto es importante.
+    ///       - Si el valorDeTransición mayorQue 0: Es una transición interna por lo que cambiará de 
+    ///         nodo activo y se llamará a OnStart para inicializarlo antes de ser llamado en el mismo 
+    ///         ciclo de ejecución.
     /// </summary>
     /// <typeparam name="TData">Data managed by the Machine</typeparam>
     public abstract class Machine<TData> : IStateEvaluator<TData> {

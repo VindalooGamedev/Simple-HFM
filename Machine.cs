@@ -46,31 +46,30 @@ namespace HFM
     ///         execution cycle.
     /// </summary>
     /// <typeparam name="TData">Data managed by the Machine</typeparam>
-    public abstract class Machine<TData> : IStateEvaluator<TData> {
-        public int ActiveState { get; set; }
-        protected IStateEvaluator<TData>[] States;
-        protected int[][] StatesReferences;
+    public abstract class Machine<Data> : IStateEvaluator<LogicLayer<Data>> {
+        protected IStateEvaluator<LogicLayer<Data>>[] States { get; }
+        protected int[][] TransitionTable { get; }
 
-        private int NextState(int transitionValue) => StatesReferences[ActiveState][transitionValue - 1];
-
-        public virtual void OnStart(TData data) {
-            ActiveState = 0;
+        public virtual void OnStart(LogicLayer<Data> data) {
+            data.ActiveState = 0;
+            data.AddState(this);
             States[0].OnStart(data);
         }
 
-        protected abstract int ExitStep(TData data, int nextState);
+        protected abstract int ExitStep(LogicLayer<Data> data, int nextState);
 
-        public int Next(TData data) {
+        public int Next(LogicLayer<Data> data) {
             int transitionValue;
             for (; ; ) {
-                transitionValue = States[ActiveState].Next(data);
+                transitionValue = States[data.ActiveState].Next(data);
                 if (transitionValue == 0) break;
                 if (transitionValue > 0) {
-                    transitionValue = NextState(transitionValue);
+                    // It uses initial transitionValue to reach final transitionValue.
+                    transitionValue = TransitionTable[data.ActiveState][transitionValue - 1];
                     if (transitionValue == 0) break;
                     if (transitionValue > 0) {
-                        ActiveState = transitionValue - 1;
-                        States[ActiveState].OnStart(data);
+                        data.ActiveState = transitionValue - 1;
+                        States[data.ActiveState].OnStart(data);
                     }
                     else {
                         transitionValue = ExitStep(data, -transitionValue);
@@ -82,8 +81,8 @@ namespace HFM
             return transitionValue;
         }
 
-        public int Next(TData data, int startAt) {
-            ActiveState = startAt;
+        public int Next(LogicLayer<Data> data, int startAt) {
+            data.ActiveState = startAt;
             return Next(data);
         }
     }

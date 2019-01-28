@@ -2,18 +2,25 @@
 
 namespace HFM
 {
-    public abstract class Machine<Data> : IStateEvaluator<LogicLayer<Data>> {
-        protected IStateEvaluator<LogicLayer<Data>>[] States { get; }
-        protected int[][] TransitionTable { get; }
+    /// <include file = 'docs/StatesLab.xml' path='doc/Machine/class'/>
+    public sealed class Machine<Data> : IStateEvaluator<LogicLayer<Data>> {
+        private IStateEvaluator<LogicLayer<Data>>[] States { get; }
+        private int[][] TransitionTable { get; }
 
-        public virtual void OnStart(LogicLayer<Data> data) {
+        /// <include file = 'docs/StatesLab.xml' path='doc/Machine/ctor'/>
+        public Machine(IStateEvaluator<LogicLayer<Data>>[] states, int[][] transitionTable) {
+            States = states;
+            TransitionTable = transitionTable;
+        }
+
+        /// <include file = 'docs/StatesLab.xml' path='doc/Machine/OnStart'/>
+        public void OnStart(LogicLayer<Data> data) {
             data.ActiveState = 0;
             data.AddState(this);
             States[0].OnStart(data);
         }
 
-        protected abstract int ExitStep(LogicLayer<Data> data, int nextState);
-
+        /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next'/>
         public int Next(LogicLayer<Data> data) {
             int transitionValue;
             for (; ; ) {
@@ -28,7 +35,7 @@ namespace HFM
                         States[data.ActiveState].OnStart(data);
                     }
                     else {
-                        transitionValue = ExitStep(data, -transitionValue);
+                        transitionValue = -transitionValue;
                         break;
                     }
                 }
@@ -37,6 +44,7 @@ namespace HFM
             return transitionValue;
         }
 
+        /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next2'/>
         public int Next(LogicLayer<Data> data, int startAt) {
             data.ActiveState = startAt;
             return Next(data);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HFM.HFM_With_DT
+namespace DecisionTrees.Iterative
 {
     public struct DTNode<TData>
     {

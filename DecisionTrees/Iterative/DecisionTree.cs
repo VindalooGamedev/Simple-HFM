@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace HFM.HFM_With_DT
+namespace DecisionTrees.Iterative
 {
-    public struct DecisionTree<TData>
+    public struct DecisionTree<TData> : IDTNode<TData>
     {
         private readonly DTNode<TData>[] _nodes;
         private readonly Action<TData>[] _actions;

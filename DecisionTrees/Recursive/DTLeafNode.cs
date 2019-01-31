@@ -1,18 +1,20 @@
 ﻿using System;
 
-namespace DecisionTrees.Recursive
+namespace StateMachinesLab.DecisionTrees.Recursive
 {
-    public class DTLeafNode<TData> : IDTNode<TData>
+    public class DTLeafNode<TData> : ITransition<TData>
     {
         private readonly Action<TData> _action;
         private readonly int _state;
 
-        public DTLeafNode(Action<TData> action, int state) {
+        public DTLeafNode(Action<TData> action, int state)
+        {
             _action = action;
             _state = state;
         }
 
-        public int Evaluate(TData data) {
+        public int Evaluate(TData data)
+        {
             _action?.Invoke(data);
             return _state;
         }

@@ -1,13 +1,14 @@
 ﻿using System;
 
-namespace DecisionTrees.Recursive
+namespace StateMachinesLab.DecisionTrees.Recursive
 {
-    public class DTNode<TData> : IDTNode<TData>
+    public class DTNode<TData> : ITransition<TData>
     {
         private readonly Func<TData, bool> _condition;
-        private readonly IDTNode<TData> _onTrue, _onFalse;
+        private readonly ITransition<TData> _onTrue, _onFalse;
 
-        public DTNode(Func<TData, bool> condition, IDTNode<TData> onTrue, IDTNode<TData> onFalse) {
+        public DTNode(Func<TData, bool> condition, ITransition<TData> onTrue, ITransition<TData> onFalse)
+        {
             _condition = condition;
             _onTrue = onTrue;
             _onFalse = onFalse;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HFM
+namespace StateMachinesLab
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/LogicLayer/class'/>
     public class LogicLayer<TData> : ILogicLayer<TData>
@@ -11,24 +11,32 @@ namespace HFM
         /// <include file = 'docs/StatesLab.xml' path='doc/LogicLayer/ActiveState'/>
         public int ActiveState { get; set; }
 
+        public TData DataLayer { get; }
+        public LogicLayer(TData data) => DataLayer = data;
+
         /// <include file = 'docs/StatesLab.xml' path='doc/LogicLayer/Init'/>
-        public void Init(Machine<TData> logicNet) {
+        public void Init(Machine<TData> logicNet)
+        {
             _currentExecution.Clear();
             AddState(logicNet);
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/LogicLayer/AddState'/>
-        public void AddState(Machine<TData> state) {
+        public void AddState(Machine<TData> state)
+        {
             _currentExecution.Push(state);
             state.OnStart(this);
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/LogicLayer/Next'/>
-        public void Next() {
+        public void Next()
+        {
             int nextStep = 0;
-            for (; ; ) {
-                if (nextStep == 0) nextStep = _currentExecution.Peek().Next(this);
-                else {
+            for (; ; )
+            {
+                if (nextStep == 0) nextStep = _currentExecution.Peek().ExecuteNextStep(this);
+                else
+                {
                     _currentExecution.Pop();
                     nextStep = _currentExecution.Peek().Next(this, nextStep);
                 }

@@ -1,13 +1,14 @@
 ﻿using System;
 
-namespace DecisionTrees.Iterative
+namespace StateMachinesLab.DecisionTrees.Iterative
 {
     public struct DTNode<TData>
     {
         private readonly Func<TData, bool> _condition;
         private readonly int _condIsTrue, _condIsFalse;
 
-        public DTNode(Func<TData, bool> condition, int condIsTrue, int condIsFalse) {
+        public DTNode(Func<TData, bool> condition, int condIsTrue, int condIsFalse)
+        {
             _condition = condition;
             _condIsTrue = condIsTrue;
             _condIsFalse = condIsFalse;

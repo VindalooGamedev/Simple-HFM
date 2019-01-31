@@ -1,40 +1,49 @@
-﻿using System;
+﻿using StateMachinesLab.States;
+using System;
 
-namespace HFM
+namespace StateMachinesLab
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/Machine/class'/>
-    public sealed class Machine<Data> : IStateEvaluator<LogicLayer<Data>> {
-        private IStateEvaluator<LogicLayer<Data>>[] States { get; }
+    public abstract class Machine<TData> : IStateInitializable<LogicLayer<TData>>
+    {
+        private IStateInitializable<LogicLayer<TData>>[] States { get; }
         private int[][] TransitionTable { get; }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/ctor'/>
-        public Machine(IStateEvaluator<LogicLayer<Data>>[] states, int[][] transitionTable) {
+        public Machine(IStateInitializable<LogicLayer<TData>>[] states, int[][] transitionTable)
+        {
             States = states;
             TransitionTable = transitionTable;
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/OnStart'/>
-        public void OnStart(LogicLayer<Data> data) {
+        public void OnStart(LogicLayer<TData> data)
+        {
             data.ActiveState = 0;
             data.AddState(this);
             States[0].OnStart(data);
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next'/>
-        public int Next(LogicLayer<Data> data) {
+        public int ExecuteNextStep(LogicLayer<TData> data)
+        {
             int transitionValue;
-            for (; ; ) {
-                transitionValue = States[data.ActiveState].Next(data);
+            for (; ; )
+            {
+                transitionValue = States[data.ActiveState].ExecuteNextStep(data);
                 if (transitionValue == 0) break;
-                if (transitionValue > 0) {
+                if (transitionValue > 0)
+                {
                     // It uses initial transitionValue to reach final transitionValue.
                     transitionValue = TransitionTable[data.ActiveState][transitionValue - 1];
                     if (transitionValue == 0) break;
-                    if (transitionValue > 0) {
+                    if (transitionValue > 0)
+                    {
                         data.ActiveState = transitionValue - 1;
                         States[data.ActiveState].OnStart(data);
                     }
-                    else {
+                    else
+                    {
                         transitionValue = -transitionValue;
                         break;
                     }
@@ -45,9 +54,10 @@ namespace HFM
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next2'/>
-        public int Next(LogicLayer<Data> data, int startAt) {
+        public int Next(LogicLayer<TData> data, int startAt)
+        {
             data.ActiveState = startAt;
-            return Next(data);
+            return ExecuteNextStep(data);
         }
     }
 }

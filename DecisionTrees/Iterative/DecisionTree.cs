@@ -1,20 +1,23 @@
 ﻿using System;
 
-namespace DecisionTrees.Iterative
+namespace StateMachinesLab.DecisionTrees.Iterative
 {
-    public struct DecisionTree<TData> : IDTNode<TData>
+    public struct DecisionTree<TData> : ITransition<TData>
     {
         private readonly DTNode<TData>[] _nodes;
         private readonly Action<TData>[] _actions;
 
-        public DecisionTree(DTNode<TData>[] nodes, Action<TData>[] actions) {
+        public DecisionTree(DTNode<TData>[] nodes, Action<TData>[] actions)
+        {
             _nodes = nodes;
             _actions = actions;
         }
 
-        public int Evaluate(TData data) {
+        public int Evaluate(TData data)
+        {
             int currNode = 0;
-            do {
+            do
+            {
                 currNode = _nodes[currNode].Evaluate(data);
             } while (currNode >= 0);
             currNode = -currNode;

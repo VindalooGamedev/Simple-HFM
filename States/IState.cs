@@ -1,4 +1,4 @@
-﻿namespace StateMachinesLab
+﻿namespace StateMachinesLab.States
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/StateEvaluator/class'/>
     public interface IState<TData>

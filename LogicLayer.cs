@@ -34,7 +34,8 @@ namespace StateMachinesLab
             int nextStep = 0;
             for (; ; )
             {
-                if (nextStep == 0) nextStep = _currentExecution.Peek().ExecuteNextStep(this);
+                if (nextStep == 0)
+                    nextStep = _currentExecution.Peek().ExecuteNextStep(this);
                 else
                 {
                     _currentExecution.Pop();

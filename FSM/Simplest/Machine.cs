@@ -20,20 +20,12 @@ namespace StateMachinesLab.FSM.Simplest
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next'/>
         public void Next(LogicLayer<TData> logicLayer)
         {
-            // Transition if it needs it.
             int transitionValue = Transitions[logicLayer.ActiveState].Evaluate(logicLayer.DataLayer);
 
-            // If it doesn't need to transition then just execute.
-            if (transitionValue == 0)
-                transitionValue = States[logicLayer.ActiveState](logicLayer.DataLayer);
-
-            // If need to transition then move to next state and execute the state.
-            if (transitionValue > 0)
-            {
-                logicLayer.ActiveState = transitionValue - 1;
-                States[logicLayer.ActiveState](logicLayer.DataLayer);
-            }
-            else throw new Exception("Invalid Exit Value from nested StateEvaluator");
+            if (transitionValue >= 0)
+                logicLayer.ActiveState = transitionValue;
+                        
+            States[logicLayer.ActiveState](logicLayer.DataLayer);
         }
     }
 }

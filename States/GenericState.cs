@@ -3,12 +3,12 @@ using System;
 
 namespace StateMachinesLab.States
 {
-    public class GenericStateInitializable<TData> : IState<TData>
+    public class GenericState<TData> : IState<TData>
     {
         private Func<TData, int> _execNextStep;
         private Action<TData> _onStart;
 
-        public GenericStateInitializable(Func<TData, int> execNextStep, Action<TData> onStart)
+        public GenericState(Func<TData, int> execNextStep, Action<TData> onStart)
         {
             _execNextStep = execNextStep;
             _onStart = onStart;

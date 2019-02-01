@@ -1,4 +1,4 @@
-﻿namespace StateMachinesLab
+﻿namespace StateMachinesLab.States
 {
     public interface IOnStartEventListener<TData>
     {

@@ -15,10 +15,10 @@ namespace StateMachinesLab.FSM.Simplest
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/OnStart'/>
-        public void Clear(LogicLayer<TData> data) => data.ActiveState = 0;
+        public void Clear(ILogicLayer<TData> data) => data.ActiveState = 0;
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next'/>
-        public void Next(LogicLayer<TData> logicLayer)
+        public void Next(ILogicLayer<TData> logicLayer)
         {
             int transitionValue = Transitions[logicLayer.ActiveState].Evaluate(logicLayer.DataLayer);
 

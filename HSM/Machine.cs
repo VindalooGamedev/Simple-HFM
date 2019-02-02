@@ -1,21 +1,19 @@
 ﻿using StateMachinesLab.States;
-using System;
 
-namespace StateMachinesLab.HSM.EvaluatedFromRoot
+namespace StateMachinesLab.HSM
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/Machine/class'/>
-    public abstract class Machine<TData> : IStateInitializable<LogicLayer<TData>>
+    public abstract class Machine<TData> : IStateInitializable<HSMLogicLayer<TData>>
     {
-        private IStateInitializable<LogicLayer<TData>>[] States { get; }
+        private IStateInitializable<HSMLogicLayer<TData>>[] States { get; }
         private int[][] TransitionTable { get; }
         private ITransition<TData>[] Transitions { get; }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/ctor'/>
         public Machine(
-            IStateInitializable<LogicLayer<TData>>[] states,
+            IStateInitializable<HSMLogicLayer<TData>>[] states,
             ITransition<TData>[] transitions,
-            int[][] transitionTable
-            )
+            int[][] transitionTable)
         {
             States = states;
             Transitions = transitions;
@@ -23,14 +21,14 @@ namespace StateMachinesLab.HSM.EvaluatedFromRoot
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/OnStart'/>
-        public void OnStart(LogicLayer<TData> data)
+        public void OnStart(HSMLogicLayer<TData> logicLayer)
         {
-            data.ActiveState = 0;
-            States[0].OnStart(data);
+            logicLayer.AddState(this);
+            States[0].OnStart(logicLayer);
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/Machine/Next'/>
-        public int ExecuteNextStep(LogicLayer<TData> logicLayer)
+        public int ExecuteNextStep(HSMLogicLayer<TData> logicLayer)
         {
             int transitionValue = Transitions[logicLayer.ActiveState].Evaluate(logicLayer.DataLayer);
             // It leads to an external transition.
@@ -40,12 +38,18 @@ namespace StateMachinesLab.HSM.EvaluatedFromRoot
             // There is an internal state transition.
             if (transitionValue > 0)
             {
-                logicLayer.ActiveState = TransitionTable[logicLayer.ActiveState][transitionValue];
+                logicLayer.ActiveState = transitionValue;
                 States[logicLayer.ActiveState].OnStart(logicLayer);
             }
 
             States[logicLayer.ActiveState].ExecuteNextStep(logicLayer);
             return 0;
+        }
+
+        public int ExecuteNextStep(HSMLogicLayer<TData> logicLayer, int transitionValue)
+        {
+            logicLayer.ActiveState = TransitionTable[logicLayer.ActiveState][transitionValue];
+            return ExecuteNextStep(logicLayer);
         }
     }
 }

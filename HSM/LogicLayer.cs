@@ -20,7 +20,7 @@ namespace StateMachinesLab.HSM
         public void Init(Machine<TData> rootMachine)
         {
             _currentExecution.Clear();
-            AddState(rootMachine);
+            rootMachine.OnStart(this);
         }
 
         public void AddState(Machine<TData> machine)
@@ -28,7 +28,6 @@ namespace StateMachinesLab.HSM
             HierarchyLevel<TData> currHierarchyLevel = new HierarchyLevel<TData>(machine, 0);
             _currentExecution.Push(currHierarchyLevel);
             _currHierarchyLevel = currHierarchyLevel;
-            machine.OnStart(this);
         }
 
         public void Next()

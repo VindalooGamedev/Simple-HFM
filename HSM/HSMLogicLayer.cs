@@ -5,15 +5,14 @@ namespace StateMachinesLab.HSM
     /// <include file = 'docs/StatesLab.xml' path='doc/HSM/HSMLogicLayer/class'/>
     public class HSMLogicLayer<TData> : ILogicLayer<TData>
     {
-        private Stack<HierarchyLevel<TData>> _currentExecution = new Stack<HierarchyLevel<TData>>();
-
-        private HierarchyLevel<TData> _currHierarchyLevel;
-
+        private HierarchyLevel<TData>[] _hierarchyLevels;
+        private int _currHierarchyLevel;
+        
         /// <include file = 'docs/StatesLab.xml' path='doc/HSM/HSMLogicLayer/ActiveState'/>
         public int ActiveState
         {
-            get { return _currHierarchyLevel.State; }
-            set { _currHierarchyLevel.State = value; }
+            get { return _hierarchyLevels[_currHierarchyLevel].State; }
+            set { _hierarchyLevels[_currHierarchyLevel].State = value; }
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/HSM/HSMLogicLayer/DataLayer'/>
@@ -25,7 +24,7 @@ namespace StateMachinesLab.HSM
         /// <include file = 'docs/StatesLab.xml' path='doc/HSM/HSMLogicLayer/Init'/>
         public void Init(Machine<TData> rootMachine)
         {
-            _currentExecution.Clear();
+            _currHierarchyLevel = -1;
             rootMachine.OnStart(this);
         }
 
@@ -33,8 +32,7 @@ namespace StateMachinesLab.HSM
         public void AddState(Machine<TData> machine)
         {
             HierarchyLevel<TData> currHierarchyLevel = new HierarchyLevel<TData>(machine, 0);
-            _currentExecution.Push(currHierarchyLevel);
-            _currHierarchyLevel = currHierarchyLevel;
+            _hierarchyLevels[++_currHierarchyLevel] = currHierarchyLevel;
         }
 
         /// <include file = 'docs/StatesLab.xml' path='doc/HSM/HSMLogicLayer/Next'/>
@@ -43,19 +41,15 @@ namespace StateMachinesLab.HSM
             int nextStep;
             do
             {
-                nextStep = _currHierarchyLevel.Machine.ExecuteNextStep(this);
+                nextStep = _hierarchyLevels[_currHierarchyLevel].Machine.ExecuteNextStep(this);
                 if (nextStep > 0)
                 {
                     RemoveLastHierarchyLevel();
-                    nextStep = _currHierarchyLevel.Machine.ExecuteNextStep(this, nextStep);
+                    nextStep = _hierarchyLevels[_currHierarchyLevel].Machine.ExecuteNextStep(this, nextStep);
                 }
             } while (nextStep != 0);
         }
 
-        private void RemoveLastHierarchyLevel()
-        {
-            _currentExecution.Pop();
-            _currHierarchyLevel = _currentExecution.Peek();
-        }
+        private void RemoveLastHierarchyLevel() => _hierarchyLevels[_currHierarchyLevel--] = null;
     }
 }

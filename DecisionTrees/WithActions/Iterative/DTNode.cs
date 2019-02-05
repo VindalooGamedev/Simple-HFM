@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StateMachinesLab.DecisionTrees.Iterative
+namespace StateMachinesLab.DecisionTrees.WithActions.Iterative
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Iterative/DTNode/class'/>
     public struct DTNode<TData>

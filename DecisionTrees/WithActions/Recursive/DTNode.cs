@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StateMachinesLab.DecisionTrees.Recursive
+namespace StateMachinesLab.DecisionTrees.WithActions.Recursive
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Recursive/DecisionTree/class'/>
     public class DTNode<TData> : ITransition<TData>

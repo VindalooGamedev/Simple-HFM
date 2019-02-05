@@ -6,10 +6,10 @@ namespace StateMachinesLab.FSM.Simplest
     public class Machine<TData>
     {
         private readonly Func<TData, int>[] _states;
-        private readonly ITransition<TData>[] _transitions;
+        private readonly ITransition<TData, int>[] _transitions;
 
         /// <include file = 'docs/StatesLab.xml' path='doc/FSM/Simplest/Machine/ctor'/>
-        public Machine(Func<TData, int>[] states, ITransition<TData>[] transitions)
+        public Machine(Func<TData, int>[] states, ITransition<TData, int>[] transitions)
         {
             _states = states;
             _transitions = transitions;

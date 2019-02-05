@@ -3,13 +3,13 @@
 namespace StateMachinesLab.DecisionTrees.WithActions.Recursive
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Recursive/DecisionTree/class'/>
-    public class DTNode<TData> : ITransition<TData>
+    public class DTNode<TData> : ITransition<TData, int>
     {
         private readonly Func<TData, bool> _condition;
-        private readonly ITransition<TData> _onTrue, _onFalse;
+        private readonly ITransition<TData, int> _onTrue, _onFalse;
 
         /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Recursive/DecisionTree/ctor'/>
-        public DTNode(Func<TData, bool> condition, ITransition<TData> onTrue, ITransition<TData> onFalse)
+        public DTNode(Func<TData, bool> condition, ITransition<TData, int> onTrue, ITransition<TData, int> onFalse)
         {
             _condition = condition;
             _onTrue = onTrue;

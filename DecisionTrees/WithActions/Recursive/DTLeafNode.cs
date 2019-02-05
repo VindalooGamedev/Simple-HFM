@@ -3,7 +3,7 @@
 namespace StateMachinesLab.DecisionTrees.WithActions.Recursive
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Recursive/DecisionTree/class'/>
-    public class DTLeafNode<TData> : ITransition<TData>
+    public class DTLeafNode<TData> : ITransition<TData, int>
     {
         private readonly Action<TData> _action;
         private readonly int _state;

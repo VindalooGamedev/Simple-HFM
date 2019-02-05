@@ -3,7 +3,7 @@
 namespace StateMachinesLab.DecisionTrees.WithActions.Iterative
 {
     /// <include file = 'docs/StatesLab.xml' path='doc/DecisionTree/Iterative/DecisionTree/class'/>
-    public struct DecisionTree<TData> : ITransition<TData>
+    public struct DecisionTree<TData> : ITransition<TData, int>
     {
         private readonly DTNode<TData>[] _nodes;
         private readonly Action<TData>[] _actions;

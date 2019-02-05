@@ -7,12 +7,12 @@ namespace StateMachinesLab.HSM
     {
         private readonly IStateInitializable<HSMLogicLayer<TData>>[] _states;
         private readonly int[][] _transitionTable;
-        private readonly ITransition<TData>[] _transitions;
+        private readonly ITransition<TData, int>[] _transitions;
 
         /// <include file = 'docs/StatesLab.xml' path='doc/HSM/Machine/ctor'/>
         public Machine(
             IStateInitializable<HSMLogicLayer<TData>>[] states,
-            ITransition<TData>[] transitions,
+            ITransition<TData, int>[] transitions,
             int[][] transitionTable)
         {
             _states = states;

@@ -1,4 +1,4 @@
-﻿namespace StateMachinesLab.HSM
+﻿namespace StateMachinesLab.HSM.LinkedNestedMachines
 {
     public class HierarchyLevel<TData>
     {

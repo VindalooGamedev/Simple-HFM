@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace StateMachinesLab.HSM
+namespace StateMachinesLab.HSM.LinkedNestedMachines
 {
     public class HSMLogicLayer<TData> : ILogicLayer<TData>
     {

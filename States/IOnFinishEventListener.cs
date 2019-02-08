@@ -2,6 +2,6 @@
 {
     public interface IOnFinishEventListener<TData>
     {
-        void OnFinish(TData data);
+        void OnExit(TData data);
     }
 }

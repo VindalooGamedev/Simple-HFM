@@ -1,30 +1,36 @@
 ﻿using StateMachinesLab.States;
+using System;
 
-namespace StateMachinesLab.HSM
+namespace StateMachinesLab.HSM.Harel
 {
-    public abstract class Machine<TData> : IStateInitializable<HSMLogicLayer<TData>>
+    public abstract class Machine<TData> : IStateComplete<HarelLogicLayer<TData>>
     {
-        private readonly IStateInitializable<HSMLogicLayer<TData>>[] _states;
+        private readonly IStateComplete<HarelLogicLayer<TData>>[] _states;
         private readonly int[][] _transitionTable;
         private readonly ITransition<TData, int>[] _transitions;
+        private readonly Action<TData> _onEnter, _onExit;
         
         public Machine(
-            IStateInitializable<HSMLogicLayer<TData>>[] states,
+            IStateComplete<HarelLogicLayer<TData>>[] states,
             ITransition<TData, int>[] transitions,
+            Action<TData> onEnter,
+            Action<TData> onExit,
             int[][] transitionTable)
         {
             _states = states;
             _transitions = transitions;
             _transitionTable = transitionTable;
+            _onEnter = onEnter;
+            _onExit = onExit;
         }
         
-        public void OnStart(HSMLogicLayer<TData> logicLayer)
+        public void OnStart(HarelLogicLayer<TData> logicLayer)
         {
             logicLayer.AddState(this);
             _states[0].OnStart(logicLayer);
         }
         
-        public int ExecuteNextStep(HSMLogicLayer<TData> logicLayer)
+        public int ExecuteNextStep(HarelLogicLayer<TData> logicLayer)
         {
             int transitionValue = _transitions[logicLayer.ActiveState].Evaluate(logicLayer.DataLayer);
             // It leads to an external transition.
@@ -34,6 +40,7 @@ namespace StateMachinesLab.HSM
             // There is an internal state transition.
             if (transitionValue > 0)
             {
+                _states[logicLayer.ActiveState].OnExit(logicLayer);
                 logicLayer.ActiveState = transitionValue;
                 _states[logicLayer.ActiveState].OnStart(logicLayer);
             }
@@ -42,10 +49,14 @@ namespace StateMachinesLab.HSM
             return 0;
         }
         
-        public int ExecuteNextStep(HSMLogicLayer<TData> logicLayer, int transitionValue)
+        public int ExecuteNextStep(HarelLogicLayer<TData> logicLayer, int transitionValue)
         {
             logicLayer.ActiveState = _transitionTable[logicLayer.ActiveState][transitionValue];
             return ExecuteNextStep(logicLayer);
         }
+
+        public void OnExit(HarelLogicLayer<TData> logicLayer) => _onExit?.Invoke(logicLayer.DataLayer);
+        public void OnEnter(HarelLogicLayer<TData> logicLayer) => _onEnter?.Invoke(logicLayer.DataLayer);
+
     }
 }

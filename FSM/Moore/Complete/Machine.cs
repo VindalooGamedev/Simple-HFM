@@ -25,7 +25,7 @@ namespace StateMachinesLab.FSM.Moore.Complete
 
             if (transitionValue >= 0)
             {
-                _states[logicLayer.ActiveState].OnFinish(logicLayer);
+                _states[logicLayer.ActiveState].OnExit(logicLayer);
                 logicLayer.ActiveState = transitionValue;
                 _states[logicLayer.ActiveState].OnStart(logicLayer);
             }

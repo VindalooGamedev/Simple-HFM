@@ -41,7 +41,9 @@
             } while (nextStep != 0);
         }
 
-        private void RemoveLastHierarchyLevel() => _hierarchyLevels[_currHierarchyLevel--] = null;
+        private void RemoveLastHierarchyLevel()
+        {
+            _hierarchyLevels[_currHierarchyLevel--] = null;
+        }
     }
-}
 }

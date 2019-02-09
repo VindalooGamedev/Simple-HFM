@@ -57,6 +57,5 @@ namespace StateMachinesLab.HSM.Harel
 
         public void OnExit(HarelLogicLayer<TData> logicLayer) => _onExit?.Invoke(logicLayer.DataLayer);
         public void OnEnter(HarelLogicLayer<TData> logicLayer) => _onEnter?.Invoke(logicLayer.DataLayer);
-
     }
 }

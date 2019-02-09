@@ -2,12 +2,12 @@
 
 namespace StateMachinesLab.DecisionTrees.WithActions.Iterative
 {
-    public struct DecisionTree<TData> : ITransition<TData, int>
+    public struct DTRootNode<TData> : ITransition<TData, int>
     {
         private readonly DTNode<TData>[] _nodes;
         private readonly Action<TData>[] _actions;
         
-        public DecisionTree(DTNode<TData>[] nodes, Action<TData>[] actions)
+        public DTRootNode(DTNode<TData>[] nodes, Action<TData>[] actions)
         {
             _nodes = nodes;
             _actions = actions;

@@ -4,16 +4,15 @@ namespace StateMachinesLab.DecisionTrees.WithActions.Iterative
 {
     public struct DTNode<TData>
     {
-        private readonly Func<TData, bool> _condition;
-        private readonly int _condIsTrue, _condIsFalse;
-        
-        public DTNode(Func<TData, bool> condition, int condIsTrue, int condIsFalse)
+        private readonly Func<TData, int> _condition;
+        private readonly int[] _returnedValue;
+
+        public DTNode(Func<TData, int> condition, int[] returnedValue)
         {
             _condition = condition;
-            _condIsTrue = condIsTrue;
-            _condIsFalse = condIsFalse;
+            _returnedValue = returnedValue;
         }
-        
-        public int Evaluate(TData data) => (_condition(data)) ? _condIsTrue : _condIsFalse;
+
+        public int Evaluate(TData data) => _returnedValue[_condition(data)];
     }
 }

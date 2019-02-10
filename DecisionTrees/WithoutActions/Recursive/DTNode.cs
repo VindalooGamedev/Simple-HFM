@@ -4,17 +4,15 @@ namespace StateMachinesLab.DecisionTrees.WithoutActions.Recursive
 {
     public class DTNode<TData, T> : ITransition<TData, T>
     {
-        private readonly Func<TData, bool> _condition;
-        private readonly ITransition<TData, T> _onTrue, _onFalse;
-        
-        public DTNode(Func<TData, bool> condition, ITransition<TData, T> onTrue, ITransition<TData, T> onFalse)
+        private readonly Func<TData, int> _condition;
+        private readonly ITransition<TData, T>[] _nextLayer;
+
+        public DTNode(Func<TData, int> condition, ITransition<TData, T>[] nextLayer)
         {
             _condition = condition;
-            _onTrue = onTrue;
-            _onFalse = onFalse;
+            _nextLayer = nextLayer;
         }
-        
-        public T Evaluate(TData data)
-            => (_condition(data)) ? _onTrue.Evaluate(data) : _onFalse.Evaluate(data);
+
+        public T Evaluate(TData data) => _nextLayer[_condition(data)].Evaluate(data);
     }
 }

@@ -4,10 +4,10 @@ namespace StateMachinesLab.DecisionTrees.WithoutActions.Iterative
 {
     public struct DecisionTree<TData, T> : ITransition<TData, T>
     {
-        private readonly DTNode<TData>[] _nodes;
+        private readonly DTDichotomicNode<TData>[] _nodes;
         private readonly T[] _values;
         
-        public DecisionTree(DTNode<TData>[] nodes, T[] values)
+        public DecisionTree(DTDichotomicNode<TData>[] nodes, T[] values)
         {
             _nodes = nodes;
             _values = values;

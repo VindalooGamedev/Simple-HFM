@@ -1,19 +1,17 @@
 ﻿using System;
-
 namespace StateMachinesLab.DecisionTrees.WithoutActions.Iterative
 {
     public struct DTNode<TData>
     {
-        private readonly Func<TData, bool> _condition;
-        private readonly int _condIsTrue, _condIsFalse;
-        
-        public DTNode(Func<TData, bool> condition, int condIsTrue, int condIsFalse)
+        private readonly Func<TData, int> _condition;
+        private readonly int[] _returnedValues;
+
+        public DTNode(Func<TData, int> condition, int[] returnedValues)
         {
             _condition = condition;
-            _condIsTrue = condIsTrue;
-            _condIsFalse = condIsFalse;
+            _returnedValues = returnedValues;
         }
-        
-        public int Evaluate(TData data) => (_condition(data)) ? _condIsTrue : _condIsFalse;
+
+        public int Evaluate(TData data) => _returnedValues[_condition(data)];
     }
 }

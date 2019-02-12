@@ -2,6 +2,8 @@
 {
     public class HarelLogicLayer<TData> : ILogicLayer<TData>
     {
+        public TData DataLayer { get; }
+
         private HierarchyLevel<TData>[] _hierarchyLevels;
         private int _currHierarchyLevel;
 
@@ -11,7 +13,7 @@
             set { _hierarchyLevels[_currHierarchyLevel].State = value; }
         }
 
-        public TData DataLayer { get; }
+
 
         public HarelLogicLayer(TData data) => DataLayer = data;
 
